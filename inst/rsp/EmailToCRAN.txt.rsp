@@ -1,0 +1,47 @@
+<%
+hpaste <- R.utils::hpaste;
+npkgs <- nrow(pkgsToSubmit);
+if (npkgs > 1L) {
+  stop("Only one package can be tested and submitted to CRAN at the time: ", paste(sQuote(pkgsToSubmit$pathname), collapse=", "));
+}
+if (npkgs == 1L) pp <- 1L;
+pkg <- pkgsToSubmit[pp,];
+pd <- packageDescription(pkg$Package);
+
+# Identify check directories
+paths <- list.files(pattern="^checks,");
+rInfos <- sapply(paths, FUN=function(path) {
+  pathname <- file.path(path, "setup.log");
+  if (!file.exists(pathname)) return(NA);
+  bfr <- readLines(pathname, n=3L)[-1L];
+  sprintf("%s [%s]", bfr[1L], bfr[2L]);
+});
+%>
+To: cran@r-project.org
+Subject: CRAN submission <%=pkg$fullname%>
+I have submitted the following package to CRAN: <%=pkg$fullname%>
+
+I confirm that I have read and agree on the CRAN policies [http://cran.r-project.org/web/packages/policies.html].
+
+I have verified the package<% if (nrow(deps) > 0L) { %> and its <%=nrow(deps)%> reverse-dependent packages<% } %>(*) using 'R CMD build' and 'R CMD check --as-cran' on
+
+<%=hpaste(paste("* ", rInfos, sep=""), maxHead=Inf, collapse="\n", lastCollapse=" and\n")%>.
+
+I have also verified the package using the http://win-builder.r-project.org/ service.
+
+This submission contains changes that are related to updates in R and/or CRAN;
+
+ * <updates>
+
+
+Thank you,
+
+<%=gsub("<.*", "", pd$Maintainer)%> <% %>
+(maintainer of <%=pd$Package%>)
+
+<% if (nrow(deps) > 0L) { %>
+Footnotes:
+(*) The submitted updates cause no issues for any of the following <%=nrow(deps)%> reverse dependencies (recursive): <%=hpaste(deps$fullname, maxHead=Inf, lastCollapse=" and ")%>.
+<% } else { %>
+(*) There are no dependent packages that are affected by this update.
+<% } %>

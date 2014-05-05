@@ -1,0 +1,3 @@
+# Export anything without a dot in the prefix.
+exportPattern("^[^\\.]")
+exportPattern(".*")
