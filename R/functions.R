@@ -146,7 +146,7 @@ installPackages <- function(pkgs, dependencies=c("Depends", "Imports", "LinkingT
   print(pkgs);
 
   if (ignore) {
-    pkgsIgnore <- pkgsToSkip("install");
+    pkgsIgnore <- pkgsToSkip("inst");
 #    cat("Packages to skip:\n");
 #    print(pkgsIgnore);
     pkgs <- setdiff(pkgs, pkgsIgnore);
@@ -387,9 +387,27 @@ readPkgsToFile <- function(name, which=NULL, ...) {
 } # readPkgsToFile()
 
 
-pkgsToSkip <- function(...) {
-  readPkgsToFile("PackagesToSkip", ...);
-}
+pkgsToSkip <- function(which=c("", "inst"), ..., path="~") {
+  # Argument 'which':
+  which <- match.arg(which);
+
+  # WAS:
+  ## readPkgsToFile("PackagesToSkip", which, ...);
+
+  filename <- sprintf(".RCmdCheckTools-%signore", which);
+  pathname <- file.path(path, filename);
+  keep <- sapply(pathname, FUN=function(f) file_test("-f", f))
+  pathname <- pathname[keep];
+  pkgs <- character(0L);
+  if (length(pathname) > 0L) {
+    pkgs <- sapply(pathname, FUN=readLines, warn=FALSE);
+    pkgs <- gsub("#.*", "", pkgs);
+    pkgs <- gsub("^[ ]*", "", pkgs);
+    pkgs <- gsub("[ ]*$", "", pkgs);
+    pkgs <- pkgs[nzchar(pkgs)]
+  }
+  unique(pkgs);
+} # pkgsToSkip()
 
 pkgsToInstall <- function(...) {
   readPkgsToFile("PackagesToInstall", ...);
@@ -416,6 +434,8 @@ getRLIBSSep <- function() {
 
 ############################################################################
 # HISTORY:
+# 2014-05-05
+# o Updated pkgsToSkip() to use ~/.RCmdCheckTools-.*ignore instead.
 # 2013-01-15
 # o Added pkgsToInstall().
 # 2013-01-14

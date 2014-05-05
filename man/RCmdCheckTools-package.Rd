@@ -19,7 +19,7 @@
 }
 
 \author{
-  Henrik Bengtsson
+  Henrik Bengtsson [aut, cre, cph]
 }
 
 \section{License}{

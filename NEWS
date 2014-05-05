@@ -1,6 +1,11 @@
 Package: RCmdCheckTools
 =======================
 
+Version: 0.2.0 [2014-05-05]
+o Added support for ~/.RCmdCheckTools-ignore and
+  ~/.RCmdCheckTools-instignore.
+
+
 Version: 0.1.9 [2014-01-28]
 o Now packages with a single NOTE ("NOTE: There was 1 note.")
   are filed under "NOTE1".

@@ -32,7 +32,7 @@ testAll <- function(..., verbose=FALSE) {
   cat("CRAN packages to test:\n");
   print(pkgsToTest);
 
-  pkgsIgnore <- unique(c(pkgsToSkip("install"), pkgsToSkip()));
+  pkgsIgnore <- unique(c(pkgsToSkip("inst"), pkgsToSkip()));
   cat("CRAN packages to skip:\n");
   print(pkgsIgnore);
 

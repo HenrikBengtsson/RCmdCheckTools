@@ -8,9 +8,9 @@ reportAll <- function(...) {
   # Identify dependencies
   pkgsToSubmit <- getPackagesToSubmit();
   deps <- pkgDependenciesWithMaintainers(pkgsToSubmit$Package, reverse=TRUE, recursive=TRUE);
-  pkgDeps <- deps$Package; 
+  pkgDeps <- deps$Package;
   pkgsToTest <- downloadPackages(pkgDeps);
-  pkgsIgnore <- unique(c(pkgsToSkip("install"), pkgsToSkip()));
+  pkgsIgnore <- unique(c(pkgsToSkip("inst"), pkgsToSkip()));
 
   filename <- "Summary.txt";
   pathname <- file.path(outPath, filename);
@@ -27,7 +27,7 @@ reportAll <- function(...) {
     cat(msg);
     cat(msg, file=pathname, append=TRUE);
   } # for (pkg ...)
-  
+
   if (require("R.rsp")) {
     pathname <- system.file("rsp/EmailToCRAN.txt.rsp", package="RCmdCheckTools", mustWork=TRUE);
     for (pp in 1:nrow(pkgsToSubmit)) {
