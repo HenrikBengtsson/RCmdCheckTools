@@ -1,4 +1,4 @@
-reportAll <- function(...) {
+reportAll <- function(recursive=TRUE, ...) {
   cat("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
   cat(" RESULTS \n");
   cat("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
@@ -7,7 +7,7 @@ reportAll <- function(...) {
 
   # Identify dependencies
   pkgsToSubmit <- getPackagesToSubmit();
-  deps <- pkgDependenciesWithMaintainers(pkgsToSubmit$Package, reverse=TRUE, recursive=TRUE);
+  deps <- pkgDependenciesWithMaintainers(pkgsToSubmit$Package, reverse=TRUE, recursive=recursive);
   pkgDeps <- deps$Package;
   pkgsToTest <- downloadPackages(pkgDeps);
   pkgsIgnore <- unique(c(pkgsToSkip("inst"), pkgsToSkip()));
@@ -41,6 +41,8 @@ reportAll <- function(...) {
 
 ############################################################################
 # HISTORY:
+# 2014-05-07
+# o Added argument 'recursive' to reportAll().
 # 2012-08-19
 # o Now Summary.txt is written to check,<rver>/ directory.
 # 2012-07-10

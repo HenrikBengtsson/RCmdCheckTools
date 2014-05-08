@@ -126,7 +126,7 @@ updatePackages <- function(reposNames=getReposNames(), ...) {
 } # updatePackages()
 
 
-installPackages <- function(pkgs, dependencies=c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances"), reposNames=getReposNames(), deps=TRUE, update=FALSE, type=getOption("pkgType"), ..., ignore=FALSE) {
+installPackages <- function(pkgs, dependencies=c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances"), reposNames=getReposNames(), deps=TRUE, recursive=TRUE, update=FALSE, type=getOption("pkgType"), ..., ignore=FALSE) {
   # Sanity check
   stopifnot(all(regexpr("\\n", pkgs) == -1));
 
@@ -170,7 +170,7 @@ installPackages <- function(pkgs, dependencies=c("Depends", "Imports", "LinkingT
   # (a) Identify all package dependencies?
   if (deps) {
     cat("Finding package dependencies via CRAN...\n");
-    pkgDeps <- pkgDependenciesWithMaintainers(pkgs, which=dependencies, recursive=TRUE, repos=testRepos);
+    pkgDeps <- pkgDependenciesWithMaintainers(pkgs, which=dependencies, recursive=recursive, repos=testRepos);
     pkgDeps <- c(pkgDeps$Package, attr(pkgDeps, "unknown"));
   #  cat("Packages they depend on:\n");
   #  print(pkgDeps);
@@ -317,7 +317,7 @@ installPackagesToSubmit <- function(skip=TRUE) {
 } # installPackagesToSubmit()
 
 
-installPackageDependencies <- function() {
+installPackageDependencies <- function(recursive=TRUE) {
   toSubmit <- getPackagesToSubmit();
   # Nothing to do?
   if (nrow(toSubmit) == 0L) {
@@ -325,7 +325,7 @@ installPackageDependencies <- function() {
   }
 
   # Install dependencies
-  deps <- pkgDependenciesWithMaintainers(toSubmit$Package, reverse=FALSE, recursive=TRUE);
+  deps <- pkgDependenciesWithMaintainers(toSubmit$Package, reverse=FALSE, recursive=recursive);
   # Nothing to do?
   if (nrow(deps) == 0L) {
     return();
@@ -340,7 +340,7 @@ installPackageDependencies <- function() {
     pd <- packageDescription(pkg);
     # Installed?
     if (!is.list(pd) && is.na(pd)) {
-      installPackages(pkg, deps=TRUE, update=FALSE, ignore=TRUE);
+      installPackages(pkg, deps=TRUE, recursive=recursive, update=FALSE, ignore=TRUE);
       pd <- packageDescription(pkg);
     }
     if (is.list(pd)){
@@ -357,7 +357,7 @@ installPackageDependencies <- function() {
   } # for (pkg ...)
   depsAll <- unique(depsAll);
 
-  installPackages(depsAll, deps=TRUE, update=FALSE, ignore=TRUE);
+  installPackages(depsAll, deps=TRUE, recursive=recursive, update=FALSE, ignore=TRUE);
 } # installPackageDependencies()
 
 
@@ -434,6 +434,8 @@ getRLIBSSep <- function() {
 
 ############################################################################
 # HISTORY:
+# 2014-05-07
+# o Added argument 'recursive' to installPackages().
 # 2014-05-05
 # o Updated pkgsToSkip() to use ~/.RCmdCheckTools-.*ignore instead.
 # 2013-01-15

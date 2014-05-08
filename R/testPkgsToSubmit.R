@@ -1,4 +1,4 @@
-testPkgsToSubmit <- function(install=TRUE, test=TRUE, report=TRUE, offline=FALSE, ...) {
+testPkgsToSubmit <- function(install=TRUE, test=TRUE, report=TRUE, offline=FALSE, recursive=FALSE, ...) {
   # Install/link to certain packages to 'test' library, that are already
   # installed on this system, before updating the .libPaths() settings.
   pkgs <- c("RCmdCheckTools", Sys.getenv("RCmdCheckTools_xpkgs"));
@@ -14,16 +14,18 @@ testPkgsToSubmit <- function(install=TRUE, test=TRUE, report=TRUE, offline=FALSE
 
   setupAll();
 
-  if (install) installAll(offline=offline, ...);
+  if (install) installAll(offline=offline, recursive=recursive, ...);
 
-  if (test) testAll();
+  if (test) testAll(recursive=recursive);
 
-  if (report) reportAll();
+  if (report) reportAll(recursive=recursive);
 } # testPkgsToSubmit()
 
 
 ############################################################################
 # HISTORY:
+# 2014-05-07
+# o Added argument 'recursive' to testPkgsToSubmit().
 # 2013-09-22
 # o Added arguments 'setup', 'test' and 'report' to testPkgsToSubmit().
 # 2012-08-19

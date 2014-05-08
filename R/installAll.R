@@ -1,4 +1,4 @@
-installTestPkgs <- function(pkgPaths=NULL, ...) {
+installTestPkgs <- function(pkgPaths=NULL, recursive=TRUE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -59,7 +59,7 @@ installTestPkgs <- function(pkgPaths=NULL, ...) {
 } # installTestPkgs()
 
 
-installAll <- function(..., pkgPaths=NULL, delta=1.0, offline=FALSE) {
+installAll <- function(..., pkgPaths=NULL, delta=1.0, offline=FALSE, recursive=TRUE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -124,7 +124,7 @@ installAll <- function(..., pkgPaths=NULL, delta=1.0, offline=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (isOld && !offline) {
     # Identify dependencies
-    deps <- pkgDependenciesWithMaintainers(pkgsToInstall, reverse=TRUE, recursive=TRUE, offline=offline);
+    deps <- pkgDependenciesWithMaintainers(pkgsToInstall, reverse=TRUE, recursive=recursive, offline=offline);
 
     pkgDeps <- deps$Package;
     cat("Reverse package dependencies on CRAN:\n");
@@ -140,7 +140,7 @@ installAll <- function(..., pkgPaths=NULL, delta=1.0, offline=FALSE) {
     cat("Updating/installing all needed CRAN packages:\n");
     pkgsToInstall <- c(pkgsToInstall, pkgDeps);
     if (isOld && !offline) {
-      installPackages(pkgsToInstall, ignore=TRUE);
+      installPackages(pkgsToInstall, ignore=TRUE, recursive=recursive);
     }
   }
 
@@ -152,6 +152,8 @@ installAll <- function(..., pkgPaths=NULL, delta=1.0, offline=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2014-05-07
+# o Added argument 'recursive' to installAll().
 # 2012-09-25
 # o BUG FIX: Forgot to install all dependencies of the package tested.
 # 2012-08-19

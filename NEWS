@@ -1,6 +1,16 @@
 Package: RCmdCheckTools
 =======================
 
+Version: 0.3.0 [2014-05-07]
+o Added argument 'recursive' to testPkgsToSubmit(), installPackages(),
+  installAll(), testAll(), and reportAll().  testPkgsToSubmit() now
+  default to recursive=FALSE, which means only packages that depends
+  directly on the package of interest will be tested.  This was changed
+  because there are now some cyclic reverse recursive dependencies
+  otherwise resulting in test thousands of packages.  Ideally these
+  cyclic dependencies should be detected, but that's a too big task.
+
+
 Version: 0.2.0 [2014-05-05]
 o Added support for ~/.RCmdCheckTools-ignore and
   ~/.RCmdCheckTools-instignore.

@@ -1,4 +1,4 @@
-testAll <- function(..., verbose=FALSE) {
+testAll <- function(recursive=TRUE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify package to be submitted
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -11,7 +11,7 @@ testAll <- function(..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify dependencies
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  deps <- pkgDependenciesWithMaintainers(pkgsToSubmit$Package, reverse=TRUE, recursive=TRUE);
+  deps <- pkgDependenciesWithMaintainers(pkgsToSubmit$Package, reverse=TRUE, recursive=recursive);
   pkgDeps <- deps$Package;
   # In case of circular dependencies, don't test packages
   # to be submitted.
@@ -90,6 +90,8 @@ testAll <- function(..., verbose=FALSE) {
 
 ############################################################################
 # HISTORY:
+# 2014-05-07
+# o Added argument 'recursive' to testAll().
 # 2013-09-19
 # o Now testAll() also tests the package(s) to be submitted.
 # 2013-05-18
