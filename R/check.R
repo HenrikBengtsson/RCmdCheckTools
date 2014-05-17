@@ -82,7 +82,8 @@ getRCmdCheckResults <- function(path, ...) {
 
 
 rCmdCheck <- function(pathname, ..., verbose=TRUE) {
-  rootPath <- sprintf("checks,%s", getRversion());
+##  rootPath <- sprintf("checks,%s", getRversion());
+  rootPath <- "checks"
   mkdirs(rootPath);
 
   pattern <- "_[0-9.-]*[.]tar[.]gz$";

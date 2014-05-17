@@ -1,6 +1,14 @@
 Package: RCmdCheckTools
 =======================
 
+Version: 0.3.2 [2014-05-17]
+o BUG FIX: The summary report failed to identify details on R.
+
+
+Version: 0.3.1 [2014-05-12]
+o CLEANUP: The "check" directory no longer contains the R version tag.
+
+
 Version: 0.3.0 [2014-05-07]
 o Added argument 'recursive' to testPkgsToSubmit(), installPackages(),
   installAll(), testAll(), and reportAll().  testPkgsToSubmit() now

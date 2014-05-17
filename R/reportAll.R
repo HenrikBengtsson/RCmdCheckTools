@@ -2,7 +2,8 @@ reportAll <- function(recursive=TRUE, ...) {
   cat("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
   cat(" RESULTS \n");
   cat("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
-  outPath <- sprintf("checks,%s", getRversion());
+#  outPath <- sprintf("checks,%s", getRversion());
+  outPath <- "checks";
   rCmdCheckSummary(outPath);
 
   # Identify dependencies

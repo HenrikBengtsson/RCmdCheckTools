@@ -9,7 +9,7 @@ pkg <- pkgsToSubmit[pp,];
 pd <- packageDescription(pkg$Package);
 
 # Identify check directories
-paths <- list.files(pattern="^checks,");
+paths <- list.files(pattern="^checks");
 rInfos <- sapply(paths, FUN=function(path) {
   pathname <- file.path(path, "setup.log");
   if (!file.exists(pathname)) return(NA);
@@ -41,7 +41,7 @@ Thank you,
 
 <% if (nrow(deps) > 0L) { %>
 Footnotes:
-(*) The submitted updates cause no issues for any of the following <%=nrow(deps)%> reverse dependencies (recursive): <%=hpaste(deps$fullname, maxHead=Inf, lastCollapse=" and ")%>.
+(*) The submitted updates cause no issues for any of the following <%=nrow(deps)%> reverse dependencies: <%=hpaste(deps$fullname, maxHead=Inf, lastCollapse=" and ")%>.
 <% } else { %>
 (*) There are no dependent packages that are affected by this update.
 <% } %>

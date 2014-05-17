@@ -1,4 +1,4 @@
-installTestPkgs <- function(pkgPaths=NULL, recursive=TRUE, ...) {
+installTestPkgs <- function(pkgPaths=NULL, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -108,7 +108,7 @@ installAll <- function(..., pkgPaths=NULL, delta=1.0, offline=FALSE, recursive=T
 
   # Install dependent packages
   if (isOld && !offline) {
-    installPackageDependencies();
+    installPackageDependencies(recursive=recursive);
   }
 
   # Packages to install

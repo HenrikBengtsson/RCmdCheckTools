@@ -45,7 +45,8 @@ testAll <- function(recursive=TRUE, ..., verbose=FALSE) {
   # Display/log test results
   rCmdCheckSetup(verbose=verbose);
   local({
-    outPath <- sprintf("checks,%s", getRversion());
+##    outPath <- sprintf("checks,%s", getRversion());
+    outPath <- "checks";
     pathname <- file.path(outPath, "setup.log");
     rCmdCheckSetup(logfile=pathname, verbose=verbose);
     rCmdCheckSummary(outPath);
@@ -67,7 +68,8 @@ testAll <- function(recursive=TRUE, ..., verbose=FALSE) {
   # Display/log test results
   rCmdCheckSetup(verbose=verbose);
   local({
-    outPath <- sprintf("checks,%s", getRversion());
+#    outPath <- sprintf("checks,%s", getRversion());
+    outPath <- "checks";
     pathname <- file.path(outPath, "setup.log");
     rCmdCheckSetup(logfile=pathname, verbose=verbose);
     rCmdCheckSummary(outPath);
