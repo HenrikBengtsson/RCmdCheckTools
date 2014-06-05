@@ -7,12 +7,19 @@ getDownloadPath <- function() {
 } # getDownloadPath()
 
 
-downloadPackages <- function(pkgs, repos=getRepos("CRAN"), ...) {
+downloadPackages <- function(pkgs, repos=getRepos(c("CRAN", "BioCsoft")), ...) {
+  if (length(repos) > 1L) {
+    res <- lapply(repos, FUN=function(repos) downloadPackages(pkgs, repos=repos, ...));
+    res <- Reduce(rbind, res);
+    return(res);
+  }
+
   cat("Downloading packages...\n");
 
   # Already downloaded once today?
   today <- Sys.Date();
-  if (getOption("SubmitToCRAN/lastDownloaded", today-1) >= today) {
+  key <- file.path("SubmitToCRAN", "lastDownloaded", repos);
+  if (getOption(key, today-1) >= today) {
     cat("Already done today\n");
     path <- getDownloadPath();
     res <- listPackages(path);
@@ -44,7 +51,9 @@ downloadPackages <- function(pkgs, repos=getRepos("CRAN"), ...) {
   res <- listPackages(path);
   res <- subset(res, Package %in% pkgs);
 
-  options("SubmitToCRAN/lastDownloaded"=today);
+  args <- list(today);
+  names(args) <- key;
+  do.call(options, args);
 
   cat("Downloading packages...done\n");
 

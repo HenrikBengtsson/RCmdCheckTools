@@ -1,6 +1,18 @@
 Package: RCmdCheckTools
 =======================
 
+Version: 0.3.4 [2014-06-05]
+o Now pkgsToInstall() utilizes ~/.RCmdCheckTools-instalways.
+
+
+Version: 0.3.3 [2014-05-19]
+o Now pkgDependencies() finds dependencies across repositories.
+o Now getRequiredPackages() also returns "Suggested" packages.
+o Now pkgDependenciesWithMaintainers() works for multiple repositories
+  at onces and also other onces than CRAN.
+o Vectorized getRepos().
+
+
 Version: 0.3.2 [2014-05-17]
 o BUG FIX: The summary report failed to identify details on R.
 

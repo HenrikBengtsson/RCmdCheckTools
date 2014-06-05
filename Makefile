@@ -3,6 +3,7 @@
 # CORE MACROS
 ifeq ($(OS), Windows_NT)
 CD=cd
+CURDIR=$(subst \,/,"$(shell cmd.exe /C cd)")
 else
 CD=cd -P "$(CURDIR)"; cd   # This handles the case when CURDIR is a softlink
 endif
@@ -17,6 +18,7 @@ RMDIR=$(RM) -r
 PKG_VERSION := $(shell grep -i ^version DESCRIPTION | cut -d : -d \  -f 2)
 PKG_NAME    := $(shell grep -i ^package DESCRIPTION | cut -d : -d \  -f 2)
 PKG_DIR     := $(shell basename "$(CURDIR)")
+PKG_DIR     := $(CURDIR)
 PKG_TARBALL := $(PKG_NAME)_$(PKG_VERSION).tar.gz
 PKG_ZIP     := $(PKG_NAME)_$(PKG_VERSION).zip
 PKG_TGZ     := $(PKG_NAME)_$(PKG_VERSION).tgz
@@ -139,7 +141,7 @@ ns:
 ../$(R_OUTDIR)/$(PKG_TARBALL): $(PKG_FILES)
 	$(MKDIR) ../$(R_OUTDIR)
 	$(CD) ../$(R_OUTDIR);\
-	$(R) $(R_NO_INIT) CMD build $(R_BUILD_OPTS) ../$(PKG_DIR)
+	$(R) $(R_NO_INIT) CMD build $(R_BUILD_OPTS) $(PKG_DIR)
 
 build: ../$(R_OUTDIR)/$(PKG_TARBALL)
 
@@ -264,10 +266,12 @@ cran: cran_setup ../$(R_CRAN_OUTDIR)/$(PKG_NAME),EmailToCRAN.txt
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Local repositories
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-REPOS_PATH := T:/My\ Repositories/braju.com/R
+ifeq ($(OS), Windows_NT)
+REPOS_PATH = T:/My\ Repositories/braju.com/R
+else
+REPOS_PATH = /tmp/hb/repositories/braju.com/R
+endif
 REPOS_SRC := $(REPOS_PATH)/src/contrib
-REPOS_WIN := $(REPOS_PATH)/bin/windows/contrib/$(R_VERSION_X_Y)
-REPOS_OSX := $(REPOS_PATH)/bin/macosx/contrib/$(R_VERSION_X_Y)
 
 $(REPOS_SRC):
 	$(MKDIR) "$@"
@@ -275,22 +279,7 @@ $(REPOS_SRC):
 $(REPOS_SRC)/$(PKG_TARBALL): ../$(R_OUTDIR)/$(PKG_TARBALL) $(REPOS_SRC)
 	$(CP) ../$(R_OUTDIR)/$(PKG_TARBALL) $(REPOS_SRC)
 
-$(REPOS_SRC)/PACKAGES.gz: $(REPOS_SRC) $(REPOS_SRC)/*.tar.gz
-	$(R_SCRIPT) -e "tools::write_PACKAGES('$(REPOS_SRC)', type='source')"
-
-$(REPOS_WIN):
-	$(MKDIR) "$@"
-
-$(REPOS_WIN)/$(PKG_ZIP): ../$(R_OUTDIR)/$(PKG_ZIP) $(REPOS_WIN)
-	$(CP) ../$(R_OUTDIR)/$(PKG_ZIP) $(REPOS_WIN)
-
-$(REPOS_OSX):
-	$(MKDIR) "$@"
-
-$(REPOS_OSX)/$(PKG_TGZ): ../$(R_OUTDIR)/$(PKG_OSX) $(REPOS_OSX)
-	$(CP) ../$(R_OUTDIR)/$(PKG_OSX) $(REPOS_OSX)
-
-repos: $(REPOS_SRC)/$(PKG_TARBALL) $(REPOS_WIN)/$(PKG_ZIP)
+repos: $(REPOS_SRC)/$(PKG_TARBALL)
 
 Makefile: $(FILES_MAKEFILE)
 	$(R_SCRIPT) -e "d <- 'Makefile'; s <- '../../Makefile'; if (file_test('-nt', s, d) && (regexpr('Makefile for R packages', readLines(s, n=1L)) != -1L)) file.copy(s, d, overwrite=TRUE)"

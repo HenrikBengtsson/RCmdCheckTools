@@ -8,7 +8,7 @@ reportAll <- function(recursive=TRUE, ...) {
 
   # Identify dependencies
   pkgsToSubmit <- getPackagesToSubmit();
-  deps <- pkgDependenciesWithMaintainers(pkgsToSubmit$Package, reverse=TRUE, recursive=recursive);
+  deps <- pkgDependencies(pkgsToSubmit$Package, reverse=TRUE, recursive=recursive);
   pkgDeps <- deps$Package;
   pkgsToTest <- downloadPackages(pkgDeps);
   pkgsIgnore <- unique(c(pkgsToSkip("inst"), pkgsToSkip()));

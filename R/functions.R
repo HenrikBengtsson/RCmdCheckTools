@@ -2,31 +2,46 @@
 # Local functions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Source: http://developer.r-project.org/CRAN/Scripts/depends.R
-pkgDependenciesWithMaintainers <- function(packages, which=c("Depends", "Imports", "Suggests", "LinkingTo"), recursive=FALSE, reverse=FALSE, repos=getRepos("CRAN"), offline=FALSE, force=FALSE) {
-  # Memoize
-  key <- sprintf("%s/web/packages/packages.rds", repos);
-  db <- getOption(key);
-  if ((force && !offline) || is.null(db)) {
-    description <- sprintf("%s/web/packages/packages.rds", repos);
-    con <- if(substring(description, 1L, 7L) == "file://") {
-      file(description, "rb");
-    } else {
-      url(description, "rb");
+pkgDependencies <- function(packages, which=c("Depends", "Imports", "Suggests", "LinkingTo"), recursive=FALSE, reverse=FALSE, repos=getRepos(c("CRAN", "BioCsoft")), offline=FALSE, force=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local function
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  loadDB <- function(repos, offline=FALSE, force=FALSE) {
+    url <- sprintf("%s/src/contrib/PACKAGES", repos);
+    # Memoized?
+    key <- url;
+    db <- getOption(key);
+    if ((force && !offline) || is.null(db)) {
+      con <- if(substring(url, 1L, 7L) == "file://") {
+        file(url, open="r");
+      } else {
+        url(url, open="r");
+      }
+      on.exit(close(con));
+      db <- read.dcf(con);
+      args <- list(db); names(args) <- key;
+      do.call("options", args=args);
     }
-    on.exit(close(con));
-    db <- readRDS(gzcon(con));
-    rownames(db) <- NULL;
-    args <- list(db); names(args) <- key;
-    do.call("options", args=args);
-  }
+    db;
+  } # loadDB()
 
+  # Load all available package information
+  db <- lapply(repos, FUN=loadDB, offline=offline, force=force);
+  common <- lapply(db, FUN=colnames);
+  common <- Reduce(intersect, common);
+  db <- lapply(db, FUN=function(x) x[,common]);
+  db <- Reduce(rbind, db);
+  db <- unique(db);
+
+  # Look for dependencies
   rdepends <- tools::package_dependencies(packages, db=db,
                                    which=which,
                                    recursive=recursive,
                                    reverse=reverse);
   rdepends <- sort(unique(unlist(rdepends)));
+
   pos <- match(rdepends, db[, "Package"], nomatch=0L);
-  res <- db[pos, c("Package", "Version", "Maintainer"), drop=FALSE];
+  res <- db[pos, c("Package", "Version"), drop=FALSE];
   res <- as.data.frame(res, stringsAsFactors=FALSE);
   res$fullname <- sprintf("%s %s", res$Package, res$Version);
 
@@ -37,14 +52,23 @@ pkgDependenciesWithMaintainers <- function(packages, which=c("Depends", "Imports
   }
 
   res;
-} # pkgDependenciesWithMaintainers()
+} # pkgDependencies()
 
 
-getRequiredPackages <- function(pkgsToTest, which=c("all", "missing")) {
+getRequiredPackages <- function(pkgsToTest, which=c("all", "missing"), repos=getRepos(c("CRAN", "BioCsoft"))) {
   which <- match.arg(which);
-  contriburl <- contrib.url(getRepos("CRAN"), "source");
+
+  if (length(repos) > 1L) {
+    pkgs <- lapply(repos, FUN=function(repos) {
+      getRequiredPackages(pkgsToTest, which=which, repos=repos);
+    })
+    pkgs <- sort(unlist(pkgs, use.names=FALSE));
+    return(pkgs);
+  }
+
+  contriburl <- contrib.url(repos, "source");
   avail <- available.packages(contriburl=contriburl);
-  pkgs <- tools::package_dependencies(pkgsToTest$Package, db=avail);
+  pkgs <- tools::package_dependencies(pkgsToTest$Package, which=c("Depends", "Imports", "LinkingTo", "Suggests"), db=avail);
   pkgs <- unlist(pkgs, use.names=FALSE);
   pkgs <- unique(pkgs);
   if (which == "missing") {
@@ -162,18 +186,34 @@ installPackages <- function(pkgs, dependencies=c("Depends", "Imports", "LinkingT
 
   repositories <- sapply(reposNames, FUN=getRepos);
   libs <- sapply(reposNames, FUN=getLibPath);
-  testRepos <- repositories[1L];
-  testLib <- libs[1L];
 
   pkgsLeft <- pkgs;
 
   # (a) Identify all package dependencies?
   if (deps) {
-    cat("Finding package dependencies via CRAN...\n");
-    pkgDeps <- pkgDependenciesWithMaintainers(pkgs, which=dependencies, recursive=recursive, repos=testRepos);
+    cat("Finding package dependencies...\n");
+    cat("Packages:\n");
+    print(pkgs);
+    cat("Recursive: ", recursive, "\n", sep="");
+    cat("What: ", paste(dependencies, collapse=", "), "\n", sep="");
+    # Only install first generation of Suggested packages
+    if (recursive && is.element("Suggests", dependencies)) {
+      pkgDeps <- pkgDependencies(pkgs, which=dependencies, recursive=FALSE);
+      cat("Packages they directly depend on:\n");
+      print(pkgDeps);
+      dependencies <- setdiff(dependencies, "Suggests");
+      pkgDeps2 <- pkgDependencies(pkgs, which=dependencies, recursive=TRUE);
+      keep <- !is.element(pkgDeps2$Package, pkgDeps$Package);
+      pkgDeps2 <- pkgDeps2[keep,];
+      cat("Packages they indirectly depend on:\n");
+      print(pkgDeps2);
+      pkgDeps <- rbind(pkgDeps, pkgDeps2);
+    } else {
+      pkgDeps <- pkgDependencies(pkgs, which=dependencies, recursive=recursive);
+    }
     pkgDeps <- c(pkgDeps$Package, attr(pkgDeps, "unknown"));
-  #  cat("Packages they depend on:\n");
-  #  print(pkgDeps);
+    cat("Packages they depend on:\n");
+    print(pkgDeps);
 
     if (ignore) {
       pkgDeps <- setdiff(pkgDeps, pkgsIgnore);
@@ -287,8 +327,7 @@ getPackagesToSubmit <- function() {
 } # getPackagesToSubmit()
 
 
-installPackagesToSubmit <- function(skip=TRUE) {
-  toSubmit <- getPackagesToSubmit();
+installPackagesToSubmit <- function(toSubmit=getPackagesToSubmit(), skip=TRUE) {
   # Nothing to do?
   if (nrow(toSubmit) == 0L) {
     return();
@@ -317,15 +356,14 @@ installPackagesToSubmit <- function(skip=TRUE) {
 } # installPackagesToSubmit()
 
 
-installPackageDependencies <- function(recursive=TRUE) {
-  toSubmit <- getPackagesToSubmit();
+installPackageDependencies <- function(toSubmit=getPackagesToSubmit(), recursive=TRUE) {
   # Nothing to do?
   if (nrow(toSubmit) == 0L) {
     return();
   }
 
   # Install dependencies
-  deps <- pkgDependenciesWithMaintainers(toSubmit$Package, reverse=FALSE, recursive=recursive);
+  deps <- pkgDependencies(toSubmit$Package, reverse=FALSE, recursive=recursive);
   # Nothing to do?
   if (nrow(deps) == 0L) {
     return();
@@ -409,8 +447,23 @@ pkgsToSkip <- function(which=c("", "inst"), ..., path="~") {
   unique(pkgs);
 } # pkgsToSkip()
 
-pkgsToInstall <- function(...) {
-  readPkgsToFile("PackagesToInstall", ...);
+pkgsToInstall <- function(..., path="~") {
+  # WAS:
+  ## readPkgsToFile("PackagesToInstall", ...);
+
+  filename <- ".RCmdCheckTools-instalways";
+  pathname <- file.path(path, filename);
+  keep <- sapply(pathname, FUN=function(f) file_test("-f", f))
+  pathname <- pathname[keep];
+  pkgs <- character(0L);
+  if (length(pathname) > 0L) {
+    pkgs <- sapply(pathname, FUN=readLines, warn=FALSE);
+    pkgs <- gsub("#.*", "", pkgs);
+    pkgs <- gsub("^[ ]*", "", pkgs);
+    pkgs <- gsub("[ ]*$", "", pkgs);
+    pkgs <- pkgs[nzchar(pkgs)]
+  }
+  unique(pkgs);
 }
 
 
@@ -434,6 +487,15 @@ getRLIBSSep <- function() {
 
 ############################################################################
 # HISTORY:
+# 2014-06-05
+# o Now pkgsToInstall() utilizes ~/.RCmdCheckTools-instalways.
+# 2014-05-19
+# o Now pkgDependencies() finds dependencies across repositories.
+# o Now getRequiredPackages() also returns "Suggested" packages.
+# 2014-05-18
+# o Renamed pkgDependenciesWithMaintainers() to pkgDependencies().
+# o Now pkgDependenciesWithMaintainers() works for multiple repositories
+#   at onces and also other onces than CRAN.
 # 2014-05-07
 # o Added argument 'recursive' to installPackages().
 # 2014-05-05

@@ -9,6 +9,11 @@ getRepos <- function(which, ...) {
     (R.version$status == "Under development (unstable)");
   } # runningRDevel()
 
+  if (length(which) > 1L) {
+    repos <- sapply(which, FUN=getRepos, ...);
+    return(repos);
+  }
+
   repos <- getOption("repos");
   keys <- names(repos);
   if (is.element(which, keys)) {
@@ -50,6 +55,8 @@ getRepos <- function(which, ...) {
 
 ############################################################################
 # HISTORY:
+# 2014-05-18
+# o Vectorized getRepos().
 # 2012-10-30
 # o Now getRepos() no longer hard code what is R/BioC devel.
 ############################################################################

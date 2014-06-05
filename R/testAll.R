@@ -11,15 +11,17 @@ testAll <- function(recursive=TRUE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Identify dependencies
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  deps <- pkgDependenciesWithMaintainers(pkgsToSubmit$Package, reverse=TRUE, recursive=recursive);
+  cat("Finding reverse package dependencies:\n");
+  deps <- pkgDependencies(pkgsToSubmit$Package, reverse=TRUE, recursive=recursive);
   pkgDeps <- deps$Package;
   # In case of circular dependencies, don't test packages
   # to be submitted.
   pkgDeps <- setdiff(pkgDeps, pkgsToSubmit$Package);
+  print(pkgDeps);
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Download dependendencies to be tests
+  # Download dependendencies to be tested
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   cat("Downloading reverse package dependencies:\n");
   pkgsToTest <- downloadPackages(pkgDeps);
@@ -29,11 +31,11 @@ testAll <- function(recursive=TRUE, ..., verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Setup up test environment to test packages
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  cat("CRAN packages to test:\n");
+  cat("Packages to test:\n");
   print(pkgsToTest);
 
   pkgsIgnore <- unique(c(pkgsToSkip("inst"), pkgsToSkip()));
-  cat("CRAN packages to skip:\n");
+  cat("Packages to skip:\n");
   print(pkgsIgnore);
 
   missing <- getRequiredPackages(pkgsToTest, which="missing");

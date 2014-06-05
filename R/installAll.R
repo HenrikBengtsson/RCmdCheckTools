@@ -109,14 +109,12 @@ installAll <- function(..., pkgPaths=NULL, delta=1.0, offline=FALSE, recursive=T
   # Install dependent packages
   if (isOld && !offline) {
     installPackageDependencies(recursive=recursive);
+    installPackages(pkgsToInstall(), ignore=TRUE, recursive=recursive);
   }
 
   # Packages to install
   pkgsToInstall <- pkgsToSubmit$Package;
   rm(pkgsToSubmit);
-
-  # For additional packages
-  pkgsToInstall <- unique(c(pkgsToInstall, pkgsToInstall()));
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -124,7 +122,7 @@ installAll <- function(..., pkgPaths=NULL, delta=1.0, offline=FALSE, recursive=T
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (isOld && !offline) {
     # Identify dependencies
-    deps <- pkgDependenciesWithMaintainers(pkgsToInstall, reverse=TRUE, recursive=recursive, offline=offline);
+    deps <- pkgDependencies(pkgsToInstall, reverse=TRUE, recursive=recursive, offline=offline);
 
     pkgDeps <- deps$Package;
     cat("Reverse package dependencies on CRAN:\n");
