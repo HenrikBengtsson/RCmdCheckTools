@@ -328,31 +328,61 @@ getPackagesToSubmit <- function() {
 
 
 installPackagesToSubmit <- function(toSubmit=getPackagesToSubmit(), skip=TRUE) {
-  # Nothing to do?
-  if (nrow(toSubmit) == 0L) {
-    return();
-  }
-
-  # Package files to be installed
-  pathnames <- toSubmit$pathname;
-
-  # Skip already installed test packages?
-  if (skip && length(pathnames) > 0L) {
+  missingPackages <- function(pkgs) {
     avail <- installed.packages(lib.loc=getLibPath("test"));
     avail <- avail[,c("Package", "Version"),drop=FALSE];
     avail <- as.data.frame(avail, stringsAsFactors=FALSE);
-    toSubmitF <- sprintf("%s_%s", toSubmit$Package, toSubmit$Version);
+    pkgsF <- sprintf("%s_%s", pkgs$Package, pkgs$Version);
     isAvailF <- sprintf("%s_%s", avail$Package, avail$Version);
-    missing <- !is.element(toSubmitF, isAvailF);
-    pathnames <- toSubmit$pathname[missing];
-    rm(toSubmitF, avail, isAvailF, missing);
+    missing <- !is.element(pkgsF, isAvailF);
+    pkgs <- pkgs[missing,];
+    pkgs;
+  } # missingPackages()
+
+  # Nothing to do?
+  if (nrow(toSubmit) == 0L) {
+    stop("No package to be submitted.");
+  }
+
+  # Skip already installed test packages?
+  if (skip && nrow(toSubmit) > 0L) {
+    toSubmit <- missingPackages(toSubmit);
   }
 
   # Any test packages to be installed?
-  if (length(pathnames) > 0L) {
-    install.packages(pathnames, repos=NULL, lib=getLibPath("test"), type="source");
+  if (nrow(toSubmit) > 0L) {
+    pathnames <- toSubmit$pathname;
+
+    # Assert that files exists
+    ok <- (file.access(pathnames, mode=0) == 0L)
+    if (any(!ok)) {
+      stop("Package file does not exists: ", paste(pathnames[!ok], collapse=", "));
+    }
+
+    # Assert read file permissions
+    ok <- (file.access(pathnames, mode=4) == 0L)
+    if (any(!ok)) {
+      stop("Package file exists, but without read permissions: ", paste(pathnames[!ok], collapse=", "));
+    }
+
+    # Try to install
+    install.packages(pathnames, type="source", repos=NULL, lib=getLibPath("test"));
+
+    # Assert that the packages were really installed
+    pkgsM <- missingPackages(toSubmit);
+    if (nrow(pkgsM) > 0L) {
+      msg <- sprintf("Failed to install packages to be submitted:\n%s\n",
+                     paste(capture.output(print(pkgsM)), collapse="\n"))
+      fi <- file.info(pkgsM$pathname)
+      msg <- sprintf("%s\n%s\n", msg,
+                     paste(capture.output(print(fi)), collapse="\n"))
+      msg <- sprintf("%s\nCurrent working directory: %s\n", msg, getwd())
+      stop(msg)
+    }
   }
-  invisible(pathnames);
+
+  # Return packages that were actually installed
+  invisible(toSubmit);
 } # installPackagesToSubmit()
 
 
@@ -487,6 +517,9 @@ getRLIBSSep <- function() {
 
 ############################################################################
 # HISTORY:
+# 2014-06-07
+# o ROBUSTNESS: Now installPackagesToSubmit() asserts that the packages
+#   to be submitted are really installed.
 # 2014-06-05
 # o Now pkgsToInstall() utilizes ~/.RCmdCheckTools-instalways.
 # 2014-05-19
