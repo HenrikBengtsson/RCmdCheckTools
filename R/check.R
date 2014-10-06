@@ -12,6 +12,13 @@ rCmdCheckSetup <- function(..., logfile=NULL, verbose=TRUE) {
   envs <- c(envs, "_R_CHECK_WARN_ON_NAMESPACE_"="FALSE");
 ##  envs <- c(envs, "_R_CHECK_DOT_INTERNAL_"="TRUE");
 ##  envs <- c(envs, "_R_CHECK_USE_CODETOOLS_"="TRUE");
+
+  ## Sizes
+  envs <- c(envs, "_R_CHECK_PKG_SIZES_"="FALSE");
+  envs <- c(envs, "_R_CHECK_DOC_SIZES_"="FALSE");
+  envs <- c(envs, "_R_CHECK_DOC_SIZES2_"="FALSE");
+  envs <- c(envs, "_R_CHECK_COMPACT_DATA_"="FALSE");
+
   envs <- c(envs, "R_BROWSER"="false");  # Don't open URLs in browser
   envs <- paste(names(envs), "=", envs);
   cat(file=pathname, envs, sep="\n");
@@ -180,6 +187,8 @@ rCmdCheckSummary <- function(path, after=c(ERROR=100, WARNING=6, NOTE=6, NOTE1=6
 
 ############################################################################
 # HISTORY:
+# 2014-10-06
+# o Now rCmdCheckSetup() no longer checks sizes.
 # 2014-01-28
 # o Now package with check status NOTE is separated into those with a
 #   single NOTE and those with two or more NOTEs.

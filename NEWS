@@ -1,6 +1,10 @@
 Package: RCmdCheckTools
 =======================
 
+Version: 0.3.6 [2014-10-06]
+o Now rCmdCheckSetup() no longer checks sizes.
+
+
 Version: 0.3.5 [2014-06-07]
 o ROBUSTNESS: Now installPackagesToSubmit() asserts that the packages
   to be submitted are really installed.
