@@ -19,6 +19,11 @@ rCmdCheckSetup <- function(..., logfile=NULL, verbose=TRUE) {
   envs <- c(envs, "_R_CHECK_DOC_SIZES2_"="FALSE");
   envs <- c(envs, "_R_CHECK_COMPACT_DATA_"="FALSE");
 
+  ## Rd
+  envs <- c(envs, "_R_CHECK_RD_LINE_WIDTHS_"="FALSE");
+  envs <- c(envs, "_R_CHECK_RD_STYLE_"="FALSE");
+  envs <- c(envs, "_R_CHECK_RD_XREFS_"="FALSE");
+
   envs <- c(envs, "R_BROWSER"="false");  # Don't open URLs in browser
   envs <- paste(names(envs), "=", envs);
   cat(file=pathname, envs, sep="\n");

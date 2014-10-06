@@ -2,7 +2,7 @@ Package: RCmdCheckTools
 =======================
 
 Version: 0.3.6 [2014-10-06]
-o Now rCmdCheckSetup() no longer checks sizes.
+o Now rCmdCheckSetup() no longer checks sizes and certain Rd criteria.
 
 
 Version: 0.3.5 [2014-06-07]
