@@ -19,11 +19,11 @@ rInfos <- sapply(paths, FUN=function(path) {
 %>
 To: cran@r-project.org
 Subject: CRAN submission <%=pkg$fullname%>
-I have submitted the following package to CRAN: <%=pkg$fullname%>
+I have submitted the <%=pkg$fullname%> package to CRAN: <%=pkg$fullname%>
 
 I confirm that I have read and agree on the CRAN policies [http://cran.r-project.org/web/packages/policies.html].
 
-I have verified the package<% if (nrow(deps) > 0L) { %> and its <%=nrow(deps)%> reverse-dependent packages<% } %>(*) using 'R CMD build' and 'R CMD check --as-cran' on
+I have verified <%=pkg$fullname%><% if (nrow(deps) > 0L) { %> and its <%=nrow(deps)%> reverse-dependent packages<% } %>(*) using 'R CMD build' and 'R CMD check --as-cran' on
 
 <%=hpaste(paste("* ", rInfos, sep=""), maxHead=Inf, collapse="\n", lastCollapse=" and\n")%>.
 
@@ -41,7 +41,7 @@ Thank you,
 
 <% if (nrow(deps) > 0L) { %>
 Footnotes:
-(*) The submitted updates cause no issues for any of the following <%=nrow(deps)%> reverse dependencies: <%=hpaste(deps$fullname, maxHead=Inf, lastCollapse=" and ")%>.
+(*) The submitted updates cause no issues for any of the following <%=nrow(deps)%> reverse dependencies on CRAN and Bioconductor: <%=hpaste(deps$fullname, maxHead=Inf, lastCollapse=" and ")%>.
 <% } else { %>
 (*) There are no dependent packages that are affected by this update.
 <% } %>

@@ -4,7 +4,7 @@ rCmdCheckSetup <- function(..., logfile=NULL, verbose=TRUE) {
   envs <- c("_R_CHECK_XREFS_REPOSITORIES_"="\"invalidURL\"");
   envs <- c(envs, "_R_CHECK_FORCE_SUGGESTS_"="FALSE");
   envs <- c(envs, "_R_CHECK_REPLACING_IMPORTS_"="FALSE");
-  envs <- c(envs, "# NB: The following are ignored with --as-cran");
+  envs <- c(envs, "## "="NB: The following are ignored with --as-cran");
   envs <- c(envs, "_R_CHECK_WARN_ON_NAMESPACE_"="FALSE");
   if (getRversion() < 3) {
     envs <- c(envs, "R_RD4PDF"="times,hyper");
@@ -24,7 +24,10 @@ rCmdCheckSetup <- function(..., logfile=NULL, verbose=TRUE) {
   envs <- c(envs, "_R_CHECK_RD_STYLE_"="FALSE");
   envs <- c(envs, "_R_CHECK_RD_XREFS_"="FALSE");
 
+  ## Browsers, viewers etc.
   envs <- c(envs, "R_BROWSER"="false");  # Don't open URLs in browser
+  envs <- c(envs, "R_PDFVIEWER"="false");  # Don't open PDFs
+
   envs <- paste(names(envs), "=", envs);
   cat(file=pathname, envs, sep="\n");
   Sys.setenv("R_CHECK_ENVIRON"=pathname);
