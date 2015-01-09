@@ -17,30 +17,31 @@ rInfos <- sapply(paths, FUN=function(path) {
   sprintf("%s [%s]", bfr[1L], bfr[2L]);
 });
 %>
+<%---
 To: cran@r-project.org
 Subject: CRAN submission <%=pkg$fullname%>
-I have submitted the <%=pkg$fullname%> package to CRAN: <%=pkg$fullname%>
+I have submitted the <%=pkg$fullname%> package to CRAN.
 
 I confirm that I have read and agree on the CRAN policies [http://cran.r-project.org/web/packages/policies.html].
-
-I have verified <%=pkg$fullname%><% if (nrow(deps) > 0L) { %> and its <%=nrow(deps)%> reverse-dependent packages<% } %>(*) using 'R CMD build' and 'R CMD check --as-cran' on
+---%>
+I have verified <%=pkg$fullname%><% if (nrow(deps) > 0L) { %> and its <%=nrow(deps)%> reverse-dependent packages<% } %>(*) using `R CMD build` and `R CMD check --as-cran` on
 
 <%=hpaste(paste("* ", rInfos, sep=""), maxHead=Inf, collapse="\n", lastCollapse=" and\n")%>.
 
-I have also verified the package using the http://win-builder.r-project.org/ service.
+I have also verified the package using the <http://win-builder.r-project.org/> service.
 
 This submission contains changes that are related to updates in R and/or CRAN;
 
- * <updates>
+* <updates>
 
 
 Thank you,
 
-<%=gsub("<.*", "", pd$Maintainer)%> <% %>
+<%=gsub("<.*", "", pd$Maintainer)%> <% %>  
 (maintainer of <%=pd$Package%>)
 
 <% if (nrow(deps) > 0L) { %>
-Footnotes:
+Footnotes:  
 (*) The submitted updates cause no issues for any of the following <%=nrow(deps)%> reverse dependencies on CRAN and Bioconductor: <%=hpaste(deps$fullname, maxHead=Inf, lastCollapse=" and ")%>.
 <% } else { %>
 (*) There are no dependent packages that are affected by this update.
