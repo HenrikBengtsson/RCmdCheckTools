@@ -1,6 +1,10 @@
 Package: RCmdCheckTools
 =======================
 
+Version: 0.3.7 [2015-02-10]
+o Enabling PDF size checks to avoid warnings on "qdf is needed...".
+
+
 Version: 0.3.6 [2014-10-06]
 o Now rCmdCheckSetup() no longer checks sizes and certain Rd criteria.
 

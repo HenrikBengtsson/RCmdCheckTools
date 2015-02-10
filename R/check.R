@@ -15,7 +15,7 @@ rCmdCheckSetup <- function(..., logfile=NULL, verbose=TRUE) {
 
   ## Sizes
   envs <- c(envs, "_R_CHECK_PKG_SIZES_"="FALSE");
-  envs <- c(envs, "_R_CHECK_DOC_SIZES_"="FALSE");
+  envs <- c(envs, "_R_CHECK_DOC_SIZES_"="TRUE");
   envs <- c(envs, "_R_CHECK_DOC_SIZES2_"="FALSE");
   envs <- c(envs, "_R_CHECK_COMPACT_DATA_"="FALSE");
 
