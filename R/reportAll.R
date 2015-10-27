@@ -32,7 +32,7 @@ reportAll <- function(recursive=TRUE, ...) {
   if (require("R.rsp")) {
     pathname <- system.file("rsp/EmailToCRAN.txt.rsp", package="RCmdCheckTools", mustWork=TRUE);
     for (pp in 1:nrow(pkgsToSubmit)) {
-      pathnameT <- R.rsp::rsp(pathname)
+      pathnameT <- R.rsp::rfile(pathname)
       filenameP <- sprintf("%s,EmailToCRAN.txt", pkgsToSubmit$Package[pp]);
       file.rename(pathnameT, filenameP);
     }

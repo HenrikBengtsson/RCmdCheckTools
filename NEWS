@@ -1,6 +1,10 @@
 Package: RCmdCheckTools
 =======================
 
+Version: 0.3.8 [2015-10-27]
+o CLEANUP: Using R.rsp::rfile() instead of R.rsp::rsp().
+
+
 Version: 0.3.7 [2015-02-10]
 o Enabling PDF size checks to avoid warnings on "qdf is needed...".
 
