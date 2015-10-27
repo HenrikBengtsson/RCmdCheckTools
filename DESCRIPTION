@@ -7,6 +7,6 @@ Date: 2015-10-27
 Title: Methods for Running and Troubleshooting R Package Checks
 Authors@R: c(person("Henrik", "Bengtsson", role=c("aut", "cre", "cph"),
                                           email = "henrikb@braju.com"))
-Description: Methods for running and troubleshooting R package checks
+Description: Methods for running and troubleshooting R package checks.
 License: GPL (>= 2)
 LazyLoad: TRUE
