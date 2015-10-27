@@ -2,6 +2,7 @@ Package: RCmdCheckTools
 =======================
 
 Version: 0.3.8 [2015-10-27]
+o ROBUSTNESS: Importing core R functions.
 o CLEANUP: Using R.rsp::rfile() instead of R.rsp::rsp().
 
 

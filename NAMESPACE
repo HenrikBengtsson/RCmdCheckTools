@@ -1,3 +1,8 @@
-# Export anything without a dot in the prefix.
+importFrom("utils", "available.packages", "capture.output",
+           "contrib.url", "download.packages", "file_test",
+           "install.packages", "installed.packages",
+           "packageDescription", "str", "update.packages")
+
+## Export anything without a dot in the prefix.
 exportPattern("^[^\\.]")
 exportPattern(".*")
