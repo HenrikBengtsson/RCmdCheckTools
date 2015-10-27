@@ -29,8 +29,8 @@ reportAll <- function(recursive=TRUE, ...) {
     cat(msg, file=pathname, append=TRUE);
   } # for (pkg ...)
 
-  if (require("R.rsp")) {
-    pathname <- system.file("rsp/EmailToCRAN.txt.rsp", package="RCmdCheckTools", mustWork=TRUE);
+  if (requireNamespace("R.rsp")) {
+    pathname <- system.file("rsp/EmailToCRAN.txt.rsp", package="RCmdCheckTools", mustWork=TRUE)
     for (pp in 1:nrow(pkgsToSubmit)) {
       pathnameT <- R.rsp::rfile(pathname)
       filenameP <- sprintf("%s,EmailToCRAN.txt", pkgsToSubmit$Package[pp]);
