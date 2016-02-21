@@ -15,7 +15,7 @@ reportAll <- function(recursive=TRUE, ...) {
 
   filename <- "Summary.txt";
   pathname <- file.path(outPath, filename);
-  for (kk in seq(length=nrow(pkgsToTest))) {
+  for (kk in seq_len(nrow(pkgsToTest))) {
     pkg <- pkgsToTest$Package[kk];
     # Skip package?
     if (is.element(pkg, pkgsIgnore)) {

@@ -54,7 +54,7 @@ testAll <- function(recursive=TRUE, ..., verbose=FALSE) {
     rCmdCheckSummary(outPath);
   });
 
-  for (kk in seq(length=nrow(pkgsToSubmit))) {
+  for (kk in seq_len(nrow(pkgsToSubmit))) {
     pkgToSubmit <- as.list(pkgsToSubmit[kk,]);
     pkg <- pkgToSubmit$fullname;
     pathname <- pkgToSubmit$pathname;
@@ -77,7 +77,7 @@ testAll <- function(recursive=TRUE, ..., verbose=FALSE) {
     rCmdCheckSummary(outPath);
   });
 
-  for (kk in seq(length=nrow(pkgsToTest))) {
+  for (kk in seq_len(nrow(pkgsToTest))) {
     pkg <- pkgsToTest$Package[kk];
     # Skip package?
     if (is.element(pkg, pkgsIgnore)) {

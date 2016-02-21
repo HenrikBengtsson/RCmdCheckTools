@@ -97,7 +97,7 @@ nonInstalledPackages <- function(pkgs, reposNames=getReposNames(), ...) {
   libs <- sapply(reposNames, FUN=getLibPath);
 
   cat("Identifying already installed packages...\n");
-  for (rr in seq(along=repositories)) {
+  for (rr in seq_along(repositories)) {
     # Nothing todo?
     if (length(pkgs) == 0L) {
       return(pkgs);
@@ -135,7 +135,7 @@ updatePackages <- function(reposNames=getReposNames(), ...) {
   repositories <- sapply(reposNames, FUN=getRepos);
   libs <- sapply(reposNames, FUN=getLibPath);
 
-  for (rr in seq(along=repositories)) {
+  for (rr in seq_along(repositories)) {
     repos <- repositories[rr];
     lib <- libs[rr];
     cat("  Repository: ", repos, "\n", sep="");
@@ -246,7 +246,7 @@ installPackages <- function(pkgs, dependencies=c("Depends", "Imports", "LinkingT
   cat("  Packages to be installed:\n");
   print(pkgsLeft);
 
-  for (rr in seq(along=repositories)) {
+  for (rr in seq_along(repositories)) {
     # Nothing to install?
     if (length(pkgsLeft) == 0L) break;
 

@@ -1,7 +1,7 @@
 # Library paths
 libs <- .libPaths();
 cat(".libPaths():\n");
-cat(sprintf("%02d. %s\n", seq(along=libs), libs), sep="");
+cat(sprintf("%02d. %s\n", seq_along(libs), libs), sep="");
 
 # Installed packages
 dd <- installed.packages();

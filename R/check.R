@@ -150,7 +150,7 @@ rCmdCheck <- function(pathname, ..., verbose=TRUE) {
 
 rCmdCheckSummary <- function(path, after=c(ERROR=100, WARNING=6, NOTE=6, NOTE1=6), ...) {
   results <- c("ERROR", "WARNING", "NOTE", "NOTE1");
-  for (kk in seq(along=results)) {
+  for (kk in seq_along(results)) {
     resultT <- results[kk];
     pathT <- file.path(path, resultT);
     if (!file.exists(pathT)) next;
@@ -160,17 +160,17 @@ rCmdCheckSummary <- function(path, after=c(ERROR=100, WARNING=6, NOTE=6, NOTE1=6
     pathnames <- file.path(paths, "00check.log");
     pathnames <- pathnames[file.exists(pathnames)];
     cat(file=pathnameD, append=FALSE);
-    for (pp in seq(along=pathnames)) {
+    for (pp in seq_along(pathnames)) {
       pathname <- pathnames[pp];
       bfr <- readLines(pathname);
 
       indices <- c();
-      for (rr in seq(along=results)) {
+      for (rr in seq_along(results)) {
         result <- results[rr];
         idxs <- grep(result, bfr);
         if (length(idxs) == 0) next;
         idxs <- sapply(idxs, FUN=function(idx) {
-          idx + seq(length=after[result])-1L;
+          idx + seq_len(after[result])-1L;
         });
         idxs <- idxs[idxs <= length(bfr)];
         idxs <- sort(unique(idxs));
